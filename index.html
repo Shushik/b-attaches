@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+<link rel="stylesheet" type="text/css" href="b-attaches.min.css">
+<!--[if lt IE 9]><link rel=stylesheet href="b-attaches.ie.min.css"><![endif]-->
+
+<title>b-attaches</title>
+</head><body>
+
+
+<input
+    class="b-attaches-raw"
+    type="file"
+    autocomplete="off"
+    onclick="return {
+        attaches_crop : 10,
+        attaches_add  : 'Add file'
+    }"
+    data-add="Add"
+    data-crop="10"
+/>
+
+
+<script type="text/javascript" src="/js/jq.1.6.2.js"></script>
+<script type="text/javascript" src="b-attaches.min.js"></script>
+<script type="text/javascript">
+    $('.b-attaches-raw').files();
+</script>
+
+
+</body></html>

@@ -1,0 +1,10 @@
+.b-attaches__input
+{
+    filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0, enabled=false);
+}
+
+.b-attaches__label,
+.b-attaches__button
+{
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFCFC', endColorstr='#BBBBBB', GradientType=0);
+}
