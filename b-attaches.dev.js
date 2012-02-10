@@ -83,61 +83,45 @@
             $this.replaceWith($attaches.append($example));
 
             // Create the first button
-            example_clone.call($attaches.get(0));
+            example_to_button.call($attaches.get(0));
         }
 
 
         /**
          * @private
          * @this    {HTMLNode}
-         *
-         * @param {Event} event
+         * @param   {Event}    event
          */
         function
             field_change(event) {
                 var
-                    $input    = $(this),
-                    $attach   = $input.closest('.b-attaches__button'),
-                    $attaches = $attach.closest('.b-attaches'),
-                    $text     = $('.b-attaches__text', $attach),
-                    params    = $attaches.data('params'),
-                    title     = $input.val().split(/\/|\\/).pop(),
-                    value     = title,
-                    length    = value.length,
-                    extention = value.split('.').pop();
+                    file     = '',
+                    attaches = $(this).closest('.b-attaches').get(0);
 
-                // Crop filname in the middle
-                if (params.attaches_crop && value.length > params.attaches_crop) {
-                    value = value.substring(0, 5) + 
-                            ' … ' +
-                            value.substring(length - 8);
+                if (this.files) {
+                    //
+                    for (file in this.files) {
+                        if (this.files.hasOwnProperty(file) && typeof this.files[file] == 'object') {
+                            button_to_label.call(
+                                file == 0 ? this : attaches,
+                                this.files[file]
+                            );
+                        }
+                    }
+                } else {
+                    //
+                    button_to_label.call(this);
                 }
-
-                // Get the file extention and set a bem modifyer
-                if (extention) {
-                    $attach.addClass('b-attaches__label_type_' + extention.toLowerCase());
-                }
-
-                // Magicly transform a button into a label
-                $attach
-                .removeClass('b-attaches__button')
-                .addClass('b-attaches__label');
-
-                // Set file value into a title and into a inner text
-                $text
-                .text(value)
-                .attr('title', title);
 
                 // Transform example into a button
-                example_clone.call($attaches.get(0));
+                example_to_button.call(attaches);
             }
 
 
         /**
          * @private
          * @this    {HTMLNode}
-         *
-         * @param {Event} event
+         * @param   {Event} event
          */
         function
             field_remove(event) {
@@ -149,9 +133,10 @@
         /**
          * @private
          * @this    {HTMLNode}
+         * @return  {jQuery}
          */
         function
-            example_clone() {
+            example_to_button() {
                 var
                     $example = $('.b-attaches__example', $(this)),
                     $fresh   = $example.clone(true)
@@ -159,7 +144,102 @@
                                .addClass('b-attaches__button');
 
                 // Append cloned element into DOM
-                $example.after($fresh);
+                $example.closest('.b-attaches').append($fresh);
+
+                return $example;
+            }
+
+
+        /**
+         * @private
+         * @this    {HTMLNode}
+         * @return  {jQuery}
+         *
+         * @param {Object} info
+         */
+        function
+            example_to_label(info) {
+                var
+                    $attaches = $(this),
+                    $example  = $('.b-attaches__example', $attaches),
+                    $fresh    = $example.clone(true)
+                                .removeClass('b-attaches__example')
+                                .addClass('b-attaches__label')
+                               .addClass('b-attaches__label_type_' + info.name.split('.').pop()),
+                    params    = $attaches.data('params');
+
+                $('.b-attaches__text', $fresh)
+                .text(value_crop(info.name, params.attaches_crop))
+                .attr('title', info.name);
+
+                // Append cloned element into DOM
+                $attaches.prepend($fresh);
+
+                return $example;
+            }
+
+
+        /**
+         * @private
+         * @this    {HTMLNode}
+         *
+         * @param {Object} info
+         */
+        function
+            button_to_label(info) {
+                var
+                    $this     = $(this),
+                    $button   = null,
+                    $attaches = null,
+                    value     = '',
+                    params    = null;
+
+                if ($this.hasClass('b-attaches__input')) {
+                    $button   = $this.closest('.b-attaches__button'),
+                    $attaches = $button.closest('.b-attaches');
+                    params    = $attaches.data('params'),
+                    value     = $this.val();
+
+                    //
+                    $button
+                    .removeClass('b-attaches__button')
+                    .addClass('b-attaches__label')
+                    .addClass('b-attaches__label_type_' + value.split('.').pop());
+
+                    //
+                    $('.b-attaches__text', $button)
+                    .attr('title', value)
+                    .text(value_crop(value, params.attaches_crop));
+                } else {
+                    //
+                    example_to_label.call(this, info);
+                }
+            }
+
+
+        /**
+         * @private
+         * @this    {HTMLNode}
+         * @return  {String}
+         *
+         * @param {String} value
+         * @param {Number} maxlength
+         */
+        function
+            value_crop(value, maxlength) {
+                maxlength = maxlength || false;
+                value     = value.split(/\/|\\/).pop();
+
+                var
+                    length = value.length;
+
+                if (maxlength && length > maxlength) {
+                    value = value.substring(0, 5) + 
+                            ' … ' +
+                            value.substring(length - 8);
+                }
+
+                return value;
             }
 
 
