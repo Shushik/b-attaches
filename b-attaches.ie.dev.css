@@ -1,11 +1,12 @@
 .b-attaches__input
 {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=0)";
-    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+    filter:     progid:DXImageTransform.Microsoft.Alpha(opacity=0);
 }
 
 .b-attaches__label,
 .b-attaches__button
 {
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFCFC', endColorstr='#BBBBBB', GradientType=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFCFC', endColorstr='#BBBBBB', GradientType=0)";
+    filter:     progid:DXImageTransform.Microsoft.gradient(startColorstr='#FCFCFC', endColorstr='#BBBBBB', GradientType=0);
 }

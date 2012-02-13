@@ -35,8 +35,11 @@
     function
         field_create() {
             var
-                $this  = $(this).addClass('b-attaches__input'),
-                $raw   = $this.clone(),
+                $this  = $(this),
+                $raw   = $this
+                         .clone()
+                         .addClass('b-attaches__input')
+                         .removeAttr('onclick'),
                 params = this.onclick();
 
             // If params object doesn`t exist, create it
@@ -64,7 +67,8 @@
             $attaches.data('params', params);
 
             // Set onchange event handler
-            $raw.bind(
+            $attaches.delegate(
+                '.b-attaches__input',
                 'change',
                 field_change
             );
@@ -78,9 +82,10 @@
 
             // Append field raw object to example html
             $example.append($raw);
+            $attaches.append($example);
 
             // Replace field with the generated html
-            $this.replaceWith($attaches.append($example));
+            $this.replaceWith($attaches);
 
             // Create the first button
             example_to_button.call($attaches.get(0));
@@ -98,8 +103,8 @@
                     file     = '',
                     attaches = $(this).closest('.b-attaches').get(0);
 
+                // One file or many files modes
                 if (this.files) {
-                    //
                     for (file in this.files) {
                         if (this.files.hasOwnProperty(file) && typeof this.files[file] == 'object') {
                             button_to_label.call(
@@ -109,7 +114,6 @@
                         }
                     }
                 } else {
-                    //
                     button_to_label.call(this);
                 }
 
@@ -120,31 +124,34 @@
 
         /**
          * @private
-         * @this    {HTMLNode}
-         * @param   {Event} event
+         *
+         * @this  {HTMLNode}
+         * @param {Event} event
          */
         function
             field_remove(event) {
                 // Remove label from DOM
-                $(this).closest('.b-attaches__label').detach();
+                $(this).closest('.b-attaches__label').remove();
             }
 
 
         /**
          * @private
-         * @this    {HTMLNode}
-         * @return  {jQuery}
+         *
+         * @this   {HTMLNode}
+         * @return {jQuery}
          */
         function
             example_to_button() {
                 var
-                    $example = $('.b-attaches__example', $(this)),
-                    $fresh   = $example.clone(true)
-                               .removeClass('b-attaches__example')
-                               .addClass('b-attaches__button');
+                    $attaches = $(this),
+                    $example  = $('.b-attaches__example', $attaches),
+                    $button   = $example.clone()
+                                .removeClass('b-attaches__example')
+                                .addClass('b-attaches__button');
 
                 // Append cloned element into DOM
-                $example.closest('.b-attaches').append($fresh);
+                $attaches.append($button);
 
                 return $example;
             }
@@ -152,9 +159,8 @@
 
         /**
          * @private
-         * @this    {HTMLNode}
-         * @return  {jQuery}
          *
+         * @this  {HTMLNode}
          * @param {Object} info
          */
         function
@@ -162,31 +168,36 @@
                 var
                     $attaches = $(this),
                     $example  = $('.b-attaches__example', $attaches),
-                    $fresh    = $example.clone(true)
-                                .removeClass('b-attaches__example')
-                                .addClass('b-attaches__label')
-                               .addClass('b-attaches__label_type_' + info.name.split('.').pop()),
-                    params    = $attaches.data('params');
+                    $fresh    = $example.clone(),
+                    params    = $attaches.data('params'),
+                    value     = value_crop(info.name, params.attaches_crop);
 
+                // Transform example into label
+                $fresh
+                .removeClass('b-attaches__example')
+                .addClass('b-attaches__label')
+                .addClass('b-attaches__label_type_' + value.ext);
+
+                // Input values into label title and text
                 $('.b-attaches__text', $fresh)
-                .text(value_crop(info.name, params.attaches_crop))
-                .attr('title', info.name);
+                .text(value.crop)
+                .attr('title', value.full);
 
                 // Append cloned element into DOM
                 $attaches.prepend($fresh);
-
-                return $example;
             }
 
 
         /**
          * @private
-         * @this    {HTMLNode}
          *
-         * @param {Object} info
+         * @this  {HTMLNode}
+         * @param {Boolean|Object} info
          */
         function
             button_to_label(info) {
+                info = info || false;
+
                 var
                     $this     = $(this),
                     $button   = null,
@@ -194,22 +205,26 @@
                     value     = '',
                     params    = null;
 
+                // Work with the input element or with the info object
                 if ($this.hasClass('b-attaches__input')) {
                     $button   = $this.closest('.b-attaches__button'),
                     $attaches = $button.closest('.b-attaches');
                     params    = $attaches.data('params'),
-                    value     = $this.val();
+                    value     = value_crop(
+                                  $this.val(),
+                                  params.attaches_crop ? params.attaches_crop : 15
+                                );
 
-                    //
+                    // Transofm button into label
                     $button
                     .removeClass('b-attaches__button')
                     .addClass('b-attaches__label')
-                    .addClass('b-attaches__label_type_' + value.split('.').pop());
+                    .addClass('b-attaches__label_type_' + value.ext);
 
-                    //
+                    // Input values into label title and text
                     $('.b-attaches__text', $button)
-                    .attr('title', value)
-                    .text(value_crop(value, params.attaches_crop));
+                    .attr('title', value.full)
+                    .text(value.crop);
                 } else {
                     //
                     example_to_label.call(this, info);
@@ -219,27 +234,33 @@
 
         /**
          * @private
-         * @this    {HTMLNode}
-         * @return  {String}
          *
-         * @param {String} value
-         * @param {Number} maxlength
+         * @this   {Window}
+         * @return {Object}
+         * @param  {String} value
+         * @param  {Number} maxlength
          */
         function
             value_crop(value, maxlength) {
                 maxlength = maxlength || false;
-                value     = value.split(/\/|\\/).pop();
 
                 var
-                    length = value.length;
+                    length = value.length,
+                    full   = value.split(/\/|\\/).pop(),
+                    crop   = full;
 
+                // If the string is too long, cut off it`s middle
                 if (maxlength && length > maxlength) {
-                    value = value.substring(0, 5) + 
+                    crop = crop.substring(0, 5) + 
                             ' … ' +
-                            value.substring(length - 8);
+                            crop.substring(length - 8);
                 }
 
-                return value;
+                return {
+                    ext  : full.split('.').pop(),
+                    full : full,
+                    crop : crop
+                };
             }
 
 

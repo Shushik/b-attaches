@@ -34,7 +34,10 @@
 }
 
 
-.b-attaches__example
+.b-attaches__example,
+.b-attaches__example .b-attaches__input,
+.b-attaches__button .b-attaches__remove,
+.b-attaches__label .b-attaches__input
 {
     display: none;
 }
@@ -42,11 +45,11 @@
 
 .b-attaches__button
 {
-    text-shadow: 1px 1px #EEE;
+    text-shadow:    1px 1px #EEE;
+    vertical-align: middle;
 
     cursor:   pointer;
-    display:  block;
-    float:    left;
+    display:  inline-block;
     position: relative;
 
     padding:      0.3em 0.5em;
@@ -63,24 +66,19 @@
     border-radius:         0.5em;
 }
 
-.b-attaches__button .b-attaches__remove
-{
-    display: none;
-}
-
 .b-attaches__label
 {
-    text-shadow: 1px 1px #EEE;
+    text-shadow:    1px 1px #EEE;
+    vertical-align: middle;
 
-    float:    left;
+    display:  inline-block;
     position: relative;
 
     padding:      0.3em 0.3em 0.3em 28px;
     margin-right: 0.5em;
 
-
-    color:      #333;
-    border:     #EEE solid 1px;
+    color:  #333;
+    border: #EEE solid 1px;
 
     -webkit-border-top-left-radius:    1em;
     -webkit-border-bottom-left-radius: 1em;
@@ -221,7 +219,7 @@
 
 .b-attaches__label .b-attaches__input
 {
-    display: none;
+    right: -1000px;
 }
 
 
