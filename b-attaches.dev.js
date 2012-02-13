@@ -12,6 +12,7 @@
 
     /**
      * @public
+     *
      * @this   {jQuery}
      * @return {jQUery}
      */
@@ -30,7 +31,8 @@
 
     /**
      * @private
-     * @this    {HTMLNode}
+     *
+     * @this {HTMLNode}
      */
     function
         field_create() {
@@ -94,6 +96,7 @@
 
         /**
          * @private
+         *
          * @this    {HTMLNode}
          * @param   {Event}    event
          */
@@ -152,8 +155,6 @@
 
                 // Append cloned element into DOM
                 $attaches.append($button);
-
-                return $example;
             }
 
 
@@ -208,7 +209,7 @@
                 // Work with the input element or with the info object
                 if ($this.hasClass('b-attaches__input')) {
                     $button   = $this.closest('.b-attaches__button'),
-                    $attaches = $button.closest('.b-attaches');
+                    $attaches = $button.closest('.b-attaches'),
                     params    = $attaches.data('params'),
                     value     = value_crop(
                                   $this.val(),
@@ -226,7 +227,6 @@
                     .attr('title', value.full)
                     .text(value.crop);
                 } else {
-                    //
                     example_to_label.call(this, info);
                 }
             }
